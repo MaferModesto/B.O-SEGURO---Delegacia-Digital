@@ -215,3 +215,19 @@ textarea { resize: vertical; min-height: 120px; }
     .carimbo.processando { animation: none; }
     .sob-ficha, .barra-fill { transition: none; }
 }
+
+.botao-documento {
+    display: inline-block;
+    background-color: #1d4ed8;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.botao-documento:hover {
+    background-color: #1e40af;
+}
