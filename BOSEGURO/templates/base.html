@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Delegacia Digital</title>
+    <!-- ícone da aba do navegador (a sua logo) -->
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='logo.jpeg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- HEADER para todas as páginas -->
+    <header class="topo">
+    
+        <a class="marca" href="/">
+            <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo da Delegacia Digital" class="marca-logo">
+            B.O SEGURO - Delegacia Digital 
+        </a>
+
+        <!-- O menu -->
+        {% if session.get("usuario") %}
+        <nav class="menu">
+            {% if session["perfil"] == "vitima" %}
+                <a href="/lista">Meus boletins</a>
+            {% elif session["perfil"] == "atendente" %}
+                <a href="/lista">Registrados por mim</a>
+            {% else %}
+                <a href="/lista">Boletins</a>
+            {% endif %}
+
+            {% if session["perfil"] != "delegado" %}
+                <a href="/cadastrar">Novo B.O.</a>
+            {% endif %}
+        </nav>
+
+        <div class="usuario">
+            <span class="selo-perfil {{ session['perfil'] }}">{{ NOMES_PERFIL[session["perfil"]] }}</span>
+            <a href="/sair" class="btn btn-contorno btn-pequeno">Sair</a>
+        </div>
+        {% endif %}
+    </header>
+
+    <main class="pagina">
+        <!-- Mensagens de aviso (os flash() do app.py aparecem aqui) -->
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+            {% for categoria, texto in mensagens %}
+                <div class="aviso {{ categoria }}">{{ texto }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- O conteúdo de cada página entra aqui -->
+        {% block conteudo %}{% endblock %}
+    </main>
+</body>
+</html>

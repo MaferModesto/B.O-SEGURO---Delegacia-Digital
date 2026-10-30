@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<!-- Aviso no topo, de acordo com quem está vendo -->
+{% if legivel and session["perfil"] == "delegado" %}
+    <div class="aviso info">Acesso autorizado. O boletim foi descriptografado só para esta tela.</div>
+{% elif legivel %}
+    <div class="aviso info">Este boletim é seu: você vê os dados descriptografados.</div>
+{% else %}
+    <div class="aviso atencao">Seu perfil não tem permissão para ler o conteúdo. Os dados aparecem criptografados.</div>
+{% endif %}
+
+<div class="ficha-papel">
+    <!-- Carimbo verde (legível) ou vermelho (criptografado) -->
+    {% if legivel %}
+        <div class="carimbo aberto">DESCRIPTOGRAFADO<small>acesso autorizado</small></div>
+    {% else %}
+        <div class="carimbo">CRIPTOGRAFADO<small>conteúdo protegido</small></div>
+    {% endif %}
+
+    <div class="ficha-topo">
+        <div>
+            <div class="titulo">Boletim de ocorrência</div>
+            <div class="sub">Registrado por {{ b["autor"] }}</div>
+        </div>
+        <div>
+            <div class="num-legenda">Número na delegacia</div>
+            <div class="num-grande">{{ b|numero_bo }}</div>
+        </div>
+    </div>
+
+    <!-- "decode" = texto legível aparece com animação. "cifrado" = texto criptografado em fonte de código. -->
+    {% if legivel %}
+        {% set classe = "decode" %}
+    {% else %}
+        {% set classe = "cifrado" %}
+    {% endif %}
+    {% include "_ficha.html" %}
+
+    <div class="ficha-rodape">
+        <span>Registrado em {{ b["criado_em"] }}</span>
+        {% if b.get("editado_em") %}<span>Editado em {{ b["editado_em"] }}</span>{% endif %}
+    </div>
+</div>
+
+<div class="sob-ficha">
+    <a href="/lista" class="btn btn-azul">
+        {% if legivel and session["perfil"] == "delegado" %}Fechar boletim{% else %}Voltar para a lista{% endif %}
+    </a>
+    <span class="espaco"></span>
+
+    <!-- botão de editar: só aparece para quem pode (vítima, no boletim dela) -->
+    {% if pode_editar %}
+        <a href="/boletim/{{ b['id'] }}/editar" class="btn btn-aviso">Editar dados</a>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="cabeca">
+    <div>
+        {% if session["perfil"] == "vitima" %}
+            <h1>Meus boletins</h1>
+        {% elif session["perfil"] == "atendente" %}
+            <h1>Boletins que registrei</h1>
+        {% else %}
+            <h1>Boletins registrados</h1>
+        {% endif %}
+        <p>{{ boletins|length }} boletim(ns)</p>
+    </div>
+
+    {% if session["perfil"] != "delegado" %}
+        <a href="/cadastrar" class="btn btn-azul">Registrar novo B.O.</a>
+    {% endif %}
+</div>
+
+<!-- Pedir um B.O. pelo número (o sistema confere as permissões) -->
+<form action="/solicitar" method="GET" class="solicitar">
+    <div class="campo">
+        <label for="numero">
+            {% if session["perfil"] == "delegado" %}Solicitar B.O. número{% else %}Abrir um dos meus B.O. pelo número{% endif %}
+        </label>
+        <input id="numero" name="numero" placeholder="Ex.: 7 ou 0007/2026" required>
+    </div>
+    <button class="btn btn-contorno">
+        {% if session["perfil"] == "delegado" %}Solicitar acesso{% else %}Abrir{% endif %}
+    </button>
+</form>
+
+<!-- Lista de boletins (um cartão para cada) -->
+{% if boletins %}
+<div class="lista">
+    {% for b in boletins %}
+    <a class="item" href="/boletim/{{ b['id'] }}">
+        <div class="numero">B.O. {{ b|numero_bo }}</div>
+        <div class="meta">Registrado em {{ b["criado_em"] }}</div>
+
+        <!-- só o delegado vê quem registrou, porque ele vê boletins de várias pessoas -->
+        {% if session["perfil"] == "delegado" %}
+            <div class="meta">Por {{ b["autor"] }}</div>
+        {% endif %}
+
+        <div class="rodape-item">
+            <span>Abrir boletim</span>
+            {% if b.get("editado_em") %}<span class="tag">editado</span>{% endif %}
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="vazio">
+    <h3>Nenhum boletim por aqui ainda</h3>
+    {% if session["perfil"] == "delegado" %}
+        <p>Quando atendentes ou vítimas registrarem boletins, eles aparecem nesta lista.</p>
+    {% else %}
+        <p>Registre o primeiro boletim para ele ser criptografado e receber um número.</p>
+        <a href="/cadastrar" class="btn btn-azul">Registrar novo B.O.</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

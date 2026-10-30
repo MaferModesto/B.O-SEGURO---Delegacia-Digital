@@ -1,0 +1,32 @@
+DELEGACIA DIGITAL - COMO RODAR NO VSCODE (Windows)
+
+1. Abra esta pasta no VSCode (Arquivo > Abrir Pasta)
+2. Abra o terminal (Ctrl + ')
+3. Instale o Flask:   pip install flask
+4. Rode:              python app.py
+5. Abra no navegador: http://127.0.0.1:5000
+
+USUÁRIOS DE TESTE
+  vitima1   / 1234  -> escreve B.O., vê só os dela (legíveis) e pode editar
+  vitima2   / 1234  -> outra vítima (não vê os boletins da vitima1)
+  atendente / 1234  -> escreve B.O.; vê só os que registrou, criptografados, e NÃO edita
+  delegado  / abcd  -> pede o B.O. pelo número e vê todos descriptografados
+
+DADOS DE EXEMPLO
+  A pasta já vem com 13 boletins de exemplo no boletins.json.
+  Para apagar tudo e recriar os exemplos:   python popular.py
+
+COMO TROCAR A LOGO
+  Coloque a sua imagem na pasta static com o nome logo.jpeg (substitui a que já está lá).
+  Ela aparece na barra do topo, na tela de login e na aba do navegador.
+  Se a imagem não mudar, aperte Ctrl + F5.
+
+ARQUIVOS
+  app.py                -> o programa (Flask): login, criptografia, permissões e páginas
+  popular.py            -> cria os boletins de exemplo
+  boletins.json         -> boletins guardados (sempre criptografados)
+  templates/            -> as páginas HTML
+  static/style.css      -> o visual (cores, cartões, carimbo)
+  static/app.js         -> animação de revelar o texto (boletim legível)
+  static/criptografando.js -> animação de criptografar (tela de confirmação)
+  static/logo.jpeg      -> a logo

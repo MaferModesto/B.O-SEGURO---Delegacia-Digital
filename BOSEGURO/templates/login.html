@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="login-caixa">
+    <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo da Delegacia Digital" class="login-logo">
+    <h1>Entrar no sistema</h1>
+    <p>Use o seu usuário para registrar ou consultar boletins de ocorrência.</p>
+
+    <!-- se o login deu errado, mostra a mensagem de erro -->
+    {% if erro %}
+        <div class="aviso erro">{{ erro }}</div>
+    {% endif %}
+
+    <form method="POST" class="painel">
+        <div class="campo">
+            <label for="usuario">Usuário</label>
+            <input id="usuario" name="usuario" required autofocus>
+        </div>
+        <div class="campo">
+            <label for="senha">Senha</label>
+            <input id="senha" name="senha" type="password" required>
+        </div>
+        <button class="btn btn-azul" style="width:100%; justify-content:center">Entrar</button>
+    </form>
+</div>
+
+{% endblock %}

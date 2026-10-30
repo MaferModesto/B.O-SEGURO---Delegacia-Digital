@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<div class="aviso ok">B.O. {{ b|numero_bo }} registrado. Guarde esse número: ele identifica o boletim na delegacia.</div>
+
+<!-- Barra de progresso da animação (o JavaScript mostra e anima) -->
+<div class="processo" id="processo" hidden>
+    <div class="processo-texto" id="processoTexto">Criptografando o boletim...</div>
+    <div class="barra"><div class="barra-fill" id="barraFill"></div></div>
+</div>
+
+<div class="ficha-papel">
+    <!-- O carimbo começa como CRIPTOGRAFANDO e vira CRIPTOGRAFADO no fim da animação -->
+    <div class="carimbo" id="carimbo">CRIPTOGRAFADO<small>boletim protegido</small></div>
+
+    <div class="ficha-topo">
+        <div>
+            <div class="titulo">Boletim de ocorrência</div>
+            <div class="sub">Os dados abaixo já estão criptografados no arquivo</div>
+        </div>
+        <div>
+            <div class="num-legenda">Número na delegacia</div>
+            <div class="num-grande">{{ b|numero_bo }}</div>
+        </div>
+    </div>
+
+    {% include "_ficha.html" %}
+
+    <div class="ficha-rodape">
+        <span>Registrado em {{ b["criado_em"] }}</span>
+        <span>Só pessoas autorizadas leem o conteúdo.</span>
+    </div>
+</div>
+
+<!-- Botões: ficam escondidos durante a animação e aparecem no final -->
+<div class="sob-ficha" id="acoesFinais">
+    {% if session["perfil"] == "vitima" %}
+        <a href="/boletim/{{ b['id'] }}/editar" class="btn btn-aviso">Algum dado está errado? Editar</a>
+    {% else %}
+        <span class="aviso atencao" style="margin:0">Boletim fechado: depois de criptografado ele não pode ser editado.</span>
+    {% endif %}
+    <span class="espaco"></span>
+    <a href="/cadastrar" class="btn btn-contorno">Registrar outro</a>
+    <a href="/lista" class="btn btn-azul">Ir para a lista</a>
+</div>
+
+<script src="{{ url_for('static', filename='criptografando.js') }}"></script>
+{% endblock %}

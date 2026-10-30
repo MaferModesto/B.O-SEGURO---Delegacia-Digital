@@ -1,0 +1,10 @@
+{# Mostra todos os campos do boletim. É usado em confirmacao.html e em ver.html. #}
+{# "dados" tem o texto de cada campo. "planos" (só na confirmação) guarda o texto digitado, para a animação. #}
+<div class="ficha">
+    {% for c, r in ROTULOS.items() %}
+    <div class="linha {% if c == 'descricao' %}larga{% endif %}">
+        <span class="rotulo">{{ r }}</span>
+        <span class="valor {{ classe }}"{% if planos %} data-plano="{{ planos[c] }}"{% endif %}>{{ dados[c] }}</span>
+    </div>
+    {% endfor %}
+</div>

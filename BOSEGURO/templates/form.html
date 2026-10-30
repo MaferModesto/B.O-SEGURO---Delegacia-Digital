@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{# Este formulário serve para REGISTRAR (modo = "novo") e para EDITAR (modo = "editar") #}
+
+{# "campo" desenha um campo do formulário. Assim não repetimos o mesmo HTML 10 vezes. #}
+{% macro campo(nome, rotulo, tipo="text") %}
+<div class="campo">
+    <label for="{{ nome }}">{{ rotulo }}</label>
+    {% if tipo == "textarea" %}
+        <textarea id="{{ nome }}" name="{{ nome }}" required>{{ dados.get(nome, "") }}</textarea>
+    {% else %}
+        <input id="{{ nome }}" name="{{ nome }}" type="{{ tipo }}" value="{{ dados.get(nome, '') }}" required>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% block conteudo %}
+<div class="cabeca">
+    <div>
+        {% if modo == "editar" %}
+            <h1>Editar B.O. {{ b|numero_bo }}</h1>
+            <p>Corrija o que estiver errado. Ao salvar, o boletim é criptografado de novo.</p>
+        {% else %}
+            <h1>Novo boletim de ocorrência</h1>
+            <p>Ao registrar, os dados são criptografados e o boletim recebe um número da delegacia.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Aviso só para a atendente, porque ela não pode editar depois -->
+{% if modo == "novo" and session["perfil"] == "atendente" %}
+<div class="aviso atencao">Confira tudo antes de registrar. Depois do registro o boletim é criptografado e não pode mais ser editado.</div>
+{% endif %}
+
+<form method="POST" class="painel"
+      {% if modo == "novo" and session["perfil"] == "atendente" %}
+      onsubmit="return confirm('Registrar o boletim? Depois de criptografado, ele não poderá ser editado.');"
+      {% endif %}>
+
+    <div class="bloco">
+        <h3>Quem está registrando</h3>
+        <div class="grade-2">
+            {{ campo("nome", "Nome completo") }}
+            {{ campo("cpf", "CPF") }}
+            {{ campo("telefone", "Telefone", "tel") }}
+            {{ campo("endereco", "Endereço") }}
+        </div>
+    </div>
+
+    <div class="bloco">
+        <h3>A ocorrência</h3>
+        <div class="grade-2">
+            {{ campo("tipo", "Tipo de ocorrência (ex.: furto)") }}
+            {{ campo("data_hora", "Data e hora", "datetime-local") }}
+        </div>
+        {{ campo("local", "Local da ocorrência") }}
+        {{ campo("descricao", "Descrição do que aconteceu", "textarea") }}
+    </div>
+
+    <div class="bloco">
+        <h3>Envolvidos</h3>
+        <div class="grade-2">
+            {{ campo("pessoas", "Pessoas envolvidas") }}
+            {{ campo("objetos", "Objetos envolvidos") }}
+        </div>
+    </div>
+
+    <div class="acoes">
+        <button class="btn btn-azul">
+            {% if modo == "editar" %}Salvar alterações{% else %}Registrar e criptografar{% endif %}
+        </button>
+        <a class="btn btn-contorno" href="{% if modo == 'editar' %}/boletim/{{ b['id'] }}{% else %}/lista{% endif %}">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
