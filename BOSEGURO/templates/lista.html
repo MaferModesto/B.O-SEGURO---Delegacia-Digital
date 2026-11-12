@@ -24,7 +24,7 @@
         <label for="numero">
             {% if session["perfil"] == "delegado" %}Solicitar B.O. número{% else %}Abrir um dos meus B.O. pelo número{% endif %}
         </label>
-        <input id="numero" name="numero" placeholder="Ex.: 7 ou 0007/2026" required>
+        <input id="numero" name="numero" placeholder="Ex.: 007" required>
     </div>
     <button class="btn btn-contorno">
         {% if session["perfil"] == "delegado" %}Solicitar acesso{% else %}Abrir{% endif %}

@@ -7,11 +7,6 @@ from flask import Flask, render_template, request, redirect, session, flash
 app = Flask(__name__)
 app.secret_key = "chave-secreta-do-flask"    # o Flask usa para proteger o login (session)
 
-
-# -----------------------------------------------------
-# CONFIGURAÇÕES
-# -----------------------------------------------------
-
 PASTA = os.path.dirname(os.path.abspath(__file__))   # pasta onde está este arquivo
 ARQUIVO = os.path.join(PASTA, "boletins.json")       # onde os boletins são guardados
 
@@ -47,16 +42,13 @@ NOMES_PERFIL = {"vitima": "Vítima", "atendente": "Atendente", "delegado": "Dele
 def variaveis_para_os_html():
     return {"ROTULOS": ROTULOS, "NOMES_PERFIL": NOMES_PERFIL}
 
-# Filtro usado no HTML: {{ boletim|numero_bo }} mostra o número assim: 0007/2026
+# Função para mostrar o número identificador do boletim
 @app.template_filter("numero_bo")
 def numero_bo(boletim):
-    return f"{boletim['id']:04d}/{boletim['ano']}"
+    return f"{boletim['id']:03d}"
 
 
-
-# =====================================================
-# PARTE 1: CRIPTOGRAFIA (Transposição Colunar)
-# =====================================================
+# CRIPTOGRAFIA (Transposição Colunar)
 
 def ordem_das_colunas(chave):
     # Devolve a ordem alfabética das letras da chave.
@@ -97,10 +89,8 @@ def descriptografar(texto_cifrado, chave):
     texto_completo = "".join(texto)
     return texto_completo[:int(tamanho)]    # corta os "#" do final
 
-
-# =====================================================
 # PARTE 2: FUNÇÕES AUXILIARES
-# =====================================================
+
 
 def ler_boletins():
     # Lê o arquivo boletins.json e devolve a lista de boletins
@@ -161,9 +151,7 @@ def descriptografar_dados(boletim):
     return legivel
 
 
-# =====================================================
 # PARTE 3: REGRAS DE PERMISSÃO (quem pode fazer o quê)
-# =====================================================
 
 def pode_abrir(boletim):
     # Delegado abre qualquer boletim.
@@ -189,10 +177,7 @@ def pode_editar(boletim):
     # O atendente não edita depois de registrar, e o delegado só consulta.
     return session["perfil"] == "vitima" and boletim["autor"] == session["usuario"]
 
-
-# =====================================================
 # PARTE 4: PÁGINAS DO SITE
-# =====================================================
 
 @app.route("/")
 def inicio():
@@ -244,13 +229,13 @@ def lista():
 
 @app.route("/solicitar")
 def solicitar():
-    # Pedir um B.O. pelo número. Aceita "7" ou "0007/2026".
+    # Pedir um B.O. pelo número. Aceita "7".
     if "usuario" not in session:
         return redirect("/login")
 
     texto = request.args.get("numero", "").split("/")[0].strip()
     if not texto.isdigit():
-        flash("Digite o número do boletim. Exemplo: 7 ou 0007/2026.", "erro")
+        flash("Digite o número do boletim", "erro")
         return redirect("/lista")
     return redirect("/boletim/" + str(int(texto)))
 
@@ -333,6 +318,5 @@ def editar(numero):
     return render_template("form.html", modo="editar", dados=descriptografar_dados(b), b=b)
 
 
-# Roda o site: python app.py  e depois abra http://127.0.0.1:5000
 if __name__ == "__main__":
     app.run(debug=True)

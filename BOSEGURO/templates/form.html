@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 
-{# Este formulário serve para REGISTRAR (modo = "novo") e para EDITAR (modo = "editar") #}
-
-{# "campo" desenha um campo do formulário. Assim não repetimos o mesmo HTML 10 vezes. #}
 {% macro campo(nome, rotulo, tipo="text") %}
 <div class="campo">
     <label for="{{ nome }}">{{ rotulo }}</label>
